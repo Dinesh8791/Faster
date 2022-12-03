@@ -38,7 +38,7 @@ class CustomDataset(Dataset):
         # get all the image paths in sorted order
         for file_type in self.image_file_types:
             self.all_image_paths.extend(glob.glob(os.path.join(self.images_path, file_type)))
-        self.all_annot_paths = glob.glob(os.path.join(self.labels_path, '*.xml'))
+        self.all_annot_paths = glob.glob(os.path.join(self.labels_path, '*.txt'))
         self.all_images = [image_path.split(os.path.sep)[-1] for image_path in self.all_image_paths]
         self.all_images = sorted(self.all_images)
         # Remove all annotations and images when no object is present.
@@ -55,7 +55,7 @@ class CustomDataset(Dataset):
                 if member.find('bndbox'):
                     object_present = True
             if object_present == False:
-                image_name = annot_path.split(os.path.sep)[-1].split('.xml')[0]
+                image_name = annot_path.split(os.path.sep)[-1].split('.txt')[0]
                 image_root = self.all_image_paths[0].split(os.path.sep)[:-1]
                 # remove_image = f"{'/'.join(image_root)}/{image_name}.jpg"
 
@@ -71,7 +71,7 @@ class CustomDataset(Dataset):
         # Discard any image file when no annotation file 
         # is not found for the image. 
         for image_name in self.all_images:
-            possible_xml_name = os.path.join(self.labels_path, os.path.splitext(image_name)[0]+'.xml')
+            possible_xml_name = os.path.join(self.labels_path, os.path.splitext(image_name)[0]+'.txt')
             if possible_xml_name not in self.all_annot_paths:
                 print(f"{possible_xml_name} not found...")
                 print(f"Removing {image_name} image")
@@ -99,7 +99,7 @@ class CustomDataset(Dataset):
         image_resized /= 255.0
         
         # Capture the corresponding XML file for getting the annotations.
-        annot_filename = os.path.splitext(image_name)[0] + '.xml'
+        annot_filename = os.path.splitext(image_name)[0] + '.txt'
         annot_file_path = os.path.join(self.labels_path, annot_filename)
 
         boxes = []
